@@ -1,0 +1,26 @@
+.index.trusted-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 70px;
+    margin-top: 5rem;
+}
+
+.index.trusted-title {
+    font-family: "Raleway";
+    font-size: medium;
+    letter-spacing: 1.5px;
+}
+
+.index.trusted-companies {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    width: fit-content;
+    height: 75px;
+    overflow: hidden;
+}

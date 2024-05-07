@@ -1,0 +1,103 @@
+.account.main-div {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 5rem;
+}
+
+.account.main-container {
+  width: 80%;
+  display: flex;
+}
+
+.account-selection {
+  width: 25%;
+  background-color: #F9F5F6;
+  border-radius: 12px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: 4px 4px 12px #c2bfc0;
+
+}
+
+.account-content {
+  width: 75%;
+  background-color: #F9F5F6;
+  border-radius: 24px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  box-shadow: 4px 4px 12px #c2bfc0;
+}
+
+.account-selection-inner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 25px;
+  list-style: none;
+  gap: 10px;
+
+  li {
+    text-align: left;
+    font-family: "Poppins";
+    font-size: large;
+    padding: 4px 0 4px 12px;
+  }
+}
+
+.selection-selected {
+  height: calc(ma);
+  background-color: #87ceeb;
+  border-radius: 25px;
+}
+
+.account-content-header {
+  width: 100%;
+  margin-top: 0rem;
+  margin-left: 0rem;
+  h1 {
+    font-family: Tahoma, Geneva, Verdana, sans-serif;
+  }
+}
+
+.account-settings-img {
+  border-radius: 50%;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.account-content-container {
+  padding: 2rem;
+  width: 80%;
+  display: flex;
+  justify-content: start;
+  flex-direction: column;
+  gap: 25px;
+  height: 35rem;
+}
+
+.account-content-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  label {
+    font-family: "Raleway";
+    font-size: larger;
+  }
+
+  input {
+    border-radius: 8px;
+    outline: none;
+    padding: 6px 0 6px 12px;
+    border: 1px solid transparent;
+    box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.25);
+    width: 75%;
+  }
+
+  input:focus {
+    border: 1px solid rgba(0, 0, 0, 0.5);
+  }
+}

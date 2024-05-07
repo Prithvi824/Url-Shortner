@@ -1,0 +1,94 @@
+.index.features {
+    height: fit-content;
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.index.features-container {
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.index.features-text {
+    cursor: pointer;
+    color: #0039a6;
+    font-weight: 400;
+    font-size: medium;
+    position: relative;
+    font-family: "Raleway";
+    margin: 0px 100px 0px 0px;
+}
+
+.index.features-text::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 2px;
+    width: 0;
+    transition: width 0.5s;
+    background-color: #007FFF;
+}
+
+.index.features-text:hover::before {
+    left: 0;
+    width: 100%;
+}
+
+.index.features-heading {
+    font-family: "Poppins";
+    font-weight: 400;
+    font-size: larger;
+    letter-spacing: 1px;
+}
+
+.index.features-card {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    padding-top: 20px;
+}
+
+.index.features-card-inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 300px;
+    gap: 8px;
+}
+
+.index.features-card-img {
+    overflow: hidden;
+    width: inherit;
+    height: inherit;
+}
+
+.index.features-card-text {
+    display: flex;
+    flex-direction: column;
+    width: inherit;
+    gap: 12px;
+
+    h1 {
+        font-family: "Raleway";
+        font-weight: 400;
+        letter-spacing: -0.5px;
+        font-size: x-large;
+        line-height: 16px;
+    }
+
+    p {
+        font-family: "Poppins";
+        font-size: small;
+        opacity: 0.75;
+        line-height: 16px;
+    }
+}
