@@ -2,7 +2,7 @@ import "../css/customerBase.css";
 
 function CustomerBase() {
   return (
-    <section className="customer main" style={{ margin: "5rem" }}>
+    <section className="customer main m-20">
       <div className="customer main-container">
         <div className="customer inner-container">
           <div className="customer col-1">

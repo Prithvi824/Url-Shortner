@@ -9,14 +9,16 @@ import "../css/features.css"
 import "../css/footer.css"
 import "../css/features.css";
 import CustomerBase from "../components/customerbase";
+import useWindowWidth from "../assets/services/useWindowWidth";
 
 function Index() {
+  const width = useWindowWidth();
   return (
     <>
       <Hero />
       <Trusted />
       <Features />
-      <CustomerBase />
+      {width >= 600 && <CustomerBase />}
       <Footer />
     </>
   );

@@ -6,13 +6,13 @@ import analyticsImg from "../assets/svgs/analytics.svg";
 function Features() {
   return (
     <div className="index features">
-      <div className="index features-container">
+      <div className="index features-container ">
         <h1 className="index features-heading">Things we offer</h1>
-        <p className="index features-text">View all</p>
+        <p className="index features-text small:-mr-12">View all</p>
       </div>
 
-      <div>
-        <ul className="index features-card">
+      <div className="">
+        <ul className="index features-card tablet:flex-col">
           <li>
             <div className="index features-card-inner">
               <div
