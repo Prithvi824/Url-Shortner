@@ -8,12 +8,12 @@ import AccountDetails from "../components/accountDetails";
 import "../css/account.css";
 
 function Account() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const { navigator } = useOutletContext();
   const [activeAccount, setActiveAccount] = useState(true);
 
   useEffect(() => {
-    if (!user.userName || !user.email) {
+    if (!user.username || !user.email) {
       navigator("/login")
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,6 +51,15 @@ function Account() {
                     background: "rgba(105, 105, 105, 0.4)",
                   }}
                 ></i>
+              </li>
+              <li
+                onClick={() => {
+                  setUser({});
+                  navigator("/login");
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                Logout
               </li>
             </ul>
           </div>

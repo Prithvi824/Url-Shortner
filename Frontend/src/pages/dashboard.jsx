@@ -8,20 +8,34 @@ import { useOutletContext } from "react-router-dom";
 import Details from "../components/details";
 import Footer from "../components/footer";
 import Generate from "../components/generate";
+import apiRequest from "../assets/services/api";
 
 import "../css/dashboard.css";
 
 function Dashboard() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const { navigator } = useOutletContext();
-  const [urls, setUrls] = useState(user.urls || {});
+  const [links, setLinks] = useState([]);
 
   useEffect(() => {
-    if (!user.userName) {
+    if (!user.token) {
       navigator("/login");
+      return;
     }
+
+    apiRequest("/links", { token: user.token }).then(({ ok, data }) => {
+      if (ok) setLinks(data);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function addLink(link) {
+    setLinks((prev) => [...prev, link]);
+  }
+
+  function replaceLink(updated) {
+    setLinks((prev) => prev.map((link) => (link.code === updated.code ? updated : link)));
+  }
 
   return (
     <>
@@ -57,13 +71,22 @@ function Dashboard() {
                     }}
                   ></i>
                 </li>
+                <li
+                  onClick={() => {
+                    setUser({});
+                    navigator("/login");
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  Logout
+                </li>
               </ul>
             </div>
           </div>
         </nav>
 
-        <Generate modifyUrls={setUrls} />
-        <Details data={urls} />
+        <Generate token={user.token} onCreated={addLink} />
+        <Details data={links} token={user.token} onUpdated={replaceLink} />
         <Footer />
       </main>
     </>

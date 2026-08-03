@@ -1,11 +1,12 @@
 import { useRef, useState } from "react";
 import useAuth from "./use_auth";
+import apiRequest from "../assets/services/api";
 
 function AccountDetails() {
   const { user, setUser } = useAuth();
   const submitBtn = useRef(null);
 
-  const [inpitUserName, setUserName] = useState(user.userName);
+  const [inputUserName, setUserName] = useState(user.username);
   const [inputEmail, setEmail] = useState(user.email);
   const [userNameError, setUserNameError] = useState(false);
 
@@ -14,34 +15,27 @@ function AccountDetails() {
       return;
     }
 
-    const headers = {
-      "Content-Type": "application/json",
-    };
+    const body = {};
+    if (inputUserName !== user.username) body.username = inputUserName;
+    if (inputEmail !== user.email) body.email = inputEmail;
 
-    if (user.userName != inpitUserName) headers["usernameupdate"] = true;
-    if (user.email != inputEmail) headers["emailupdate"] = true;
-
-    const body = JSON.stringify({
-      owner: user.userName,
-      userName: inpitUserName,
-      email: inputEmail,
+    const { ok, data } = await apiRequest("/account", {
+      method: "PATCH",
+      token: user.token,
+      body,
     });
 
-    let response = await fetch("/update", {
-      method: "POST",
-      headers: headers,
-      body: body,
-    });
-
-    const responseData = await response.json();
-
-    if (responseData.success) {
-      setUser((prev) => {
-        return { ...prev, userName: inpitUserName, email: inputEmail };
-      });
-    } else if (responseData.userExist) {
-      setUserNameError(responseData.userExist);
-      setUserName(user.userName)
+    if (ok) {
+      setUser((prev) => ({
+        ...prev,
+        token: data.access_token,
+        username: data.username,
+        email: data.email,
+      }));
+      setUserNameError(false);
+    } else if (data.detail && data.detail.toLowerCase().includes("username")) {
+      setUserNameError(true);
+      setUserName(user.username);
     }
 
     submitBtn.current.classList.add("lock");
@@ -57,7 +51,7 @@ function AccountDetails() {
         <input
           type="text"
           id="name"
-          value={inpitUserName}
+          value={inputUserName}
           onChange={(e) => {
             setUserName(e.target.value);
             submitBtn.current.classList.remove("lock");

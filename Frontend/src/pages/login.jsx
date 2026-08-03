@@ -4,6 +4,7 @@ import { useRef } from "react";
 
 import "../login.css";
 import useAuth from "../components/use_auth";
+import apiRequest from "../assets/services/api";
 
 function Login() {
   // important constants
@@ -15,75 +16,72 @@ function Login() {
   const signUp = useRef(null);
   const login = useRef(null);
   const userNameError = useRef(null);
+  const loginError = useRef(null);
 
   const [data, setData] = useState({
-    userName: "",
+    username: "",
     password: "",
     email: "",
   });
 
-  async function handleFormSubmit(e) {
+  async function handleSignIn(e) {
+    e.preventDefault();
+    const loader = e.target.getElementsByTagName("button")[0];
+    loader.innerHTML = "<i class='bx bx-loader'></i>";
+
+    if (data.username.length > 4 && data.password.length >= 8) {
+      const { ok, data: result } = await apiRequest("/login", {
+        method: "POST",
+        body: { username: data.username, password: data.password },
+      });
+
+      if (ok) {
+        setUser({
+          token: result.access_token,
+          username: result.username,
+          email: result.email,
+        });
+        navigator("/dashboard");
+      } else {
+        loginError.current.innerHTML = result.detail || "Invalid username or password.";
+        loginError.current.style.display = "block";
+        loginError.current.style.color = "red";
+      }
+    }
+
+    loader.innerHTML = "Submit";
+  }
+
+  async function handleSignUp(e) {
     e.preventDefault();
     const loader = e.target.getElementsByTagName("button")[0];
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-    // Start the Loader
     loader.innerHTML = "<i class='bx bx-loader'></i>";
 
     if (
       data.email.match(emailRegex) &&
-      data.userName.length > 4 &&
+      data.username.length > 4 &&
       data.password.length >= 8
     ) {
-      // Send the request to server
-      let response = await fetch("/login", {
+      const { ok, data: result } = await apiRequest("/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+        body: { username: data.username, email: data.email, password: data.password },
       });
 
-      // Parse the response and set the user
-      let responseData = await response.json();
-      if (responseData.success) {
+      if (ok) {
         setUser({
-          email: responseData.email,
-          userName: responseData.userName,
-          urls: {},
+          token: result.access_token,
+          username: result.username,
+          email: result.email,
         });
         navigator("/dashboard");
-      } else if (responseData.userExist) {
-        userNameError.current.style.display = "block";
-        userNameError.current.style.color = "red";
-      }
-    } else if (data.userName.length > 4 && data.password.length >= 8) {
-      // Send req to the server
-      let response = await fetch("/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      // Parse the response and set the user
-      let responseData = await response.json();
-      if (responseData.success) {
-        setUser({
-          userName: responseData.userName,
-          email: responseData.email,
-          urls: responseData.urls,
-        });
-
-        navigator("/dashboard");
-      } else if (responseData.userExist) {
+      } else {
+        userNameError.current.innerHTML = result.detail || "Could not sign up.";
         userNameError.current.style.display = "block";
         userNameError.current.style.color = "red";
       }
     }
 
-    // Remove The loader
     loader.innerHTML = "Submit";
   }
 
@@ -93,7 +91,7 @@ function Login() {
 
     const addSignUpMode = () => {
       setData({
-        userName: "",
+        username: "",
         password: "",
         email: "",
       });
@@ -102,7 +100,7 @@ function Login() {
 
     const removeSignUpMode = () => {
       setData({
-        userName: "",
+        username: "",
         password: "",
         email: "",
       });
@@ -120,13 +118,13 @@ function Login() {
 
   return (
     <>
-      {user?.userName ? (
+      {user?.username ? (
         navigator("/dashboard")
       ) : (
         <div className="container" ref={container}>
           <div className="forms-container">
             <div className="signin-signup">
-              <form className="sign-in-form" onSubmit={handleFormSubmit}>
+              <form className="sign-in-form" onSubmit={handleSignIn}>
                 <h2 className="title">Sign in</h2>
                 <div className="input-field">
                   <i
@@ -136,8 +134,9 @@ function Login() {
                   <input
                     type="text"
                     placeholder="Username"
+                    value={data.username}
                     onChange={(e) =>
-                      setData((prev) => ({ ...prev, userName: e.target.value }))
+                      setData((prev) => ({ ...prev, username: e.target.value }))
                     }
                     required
                   />
@@ -150,18 +149,22 @@ function Login() {
                   <input
                     type="password"
                     placeholder="Password"
+                    value={data.password}
                     onChange={(e) =>
                       setData((prev) => ({ ...prev, password: e.target.value }))
                     }
                     required
                   />
                 </div>
+                <p ref={loginError} style={{ display: "none" }}>
+                  Invalid username or password.
+                </p>
                 <button type="submit" className="btn solid">
                   Submit
                 </button>
               </form>
 
-              <form className="sign-up-form" onSubmit={handleFormSubmit}>
+              <form className="sign-up-form" onSubmit={handleSignUp}>
                 <h2 className="title">Sign up</h2>
 
                 <div className="input-field">
@@ -172,8 +175,9 @@ function Login() {
                   <input
                     type="text"
                     placeholder="Username"
+                    value={data.username}
                     onChange={(e) =>
-                      setData((prev) => ({ ...prev, userName: e.target.value }))
+                      setData((prev) => ({ ...prev, username: e.target.value }))
                     }
                     required
                   />
@@ -187,6 +191,7 @@ function Login() {
                   <input
                     type="email"
                     placeholder="Email"
+                    value={data.email}
                     onChange={(e) =>
                       setData((prev) => ({ ...prev, email: e.target.value }))
                     }
@@ -202,6 +207,7 @@ function Login() {
                   <input
                     type="password"
                     placeholder="Password"
+                    value={data.password}
                     onChange={(e) =>
                       setData((prev) => ({ ...prev, password: e.target.value }))
                     }

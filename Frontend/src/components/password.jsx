@@ -1,14 +1,15 @@
 import { useRef, useState } from "react";
 import "../css/password.css";
 import useAuth from "./use_auth";
+import apiRequest from "../assets/services/api";
 
 function Password() {
   const submitBtn = useRef(null);
   const { user } = useAuth();
 
-  const [oldPassword, setOldPassword] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [cnfPassword, setCnfPassword] = useState(null);
+  const [oldPassword, setOldPassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [cnfPassword, setCnfPassword] = useState("");
 
   const changeStatus = useRef(null);
 
@@ -17,35 +18,22 @@ function Password() {
       return;
     }
 
-    if (password != cnfPassword) {
+    if (password !== cnfPassword) {
       changeStatus.current.innerHTML =
         "Make sure your new password matches the confirm password.";
       changeStatus.current.style.color = "red";
     } else {
-      const headers = {
-        "Content-Type": "application/json",
-        passwordUpdate: true,
-      };
-
-      const body = JSON.stringify({
-        owner: user.userName,
-        oldPass: oldPassword,
-        newPass: cnfPassword,
-      });
-
-      let response = await fetch("/update", {
+      const { ok } = await apiRequest("/account/password", {
         method: "POST",
-        headers: headers,
-        body: body,
+        token: user.token,
+        body: { old_password: oldPassword, new_password: cnfPassword },
       });
 
       setCnfPassword("");
       setOldPassword("");
       setPassword("");
 
-      const responseData = await response.json();
-
-      if (responseData.success) {
+      if (ok) {
         changeStatus.current.innerHTML = "Password was changed succesfully";
         changeStatus.current.style.color = "lightgreen";
       } else {

@@ -2,12 +2,11 @@ import PropTypes from "prop-types";
 
 import { useRef, useState } from "react";
 import "../css/generate.css";
-import useAuth from "./use_auth";
+import apiRequest from "../assets/services/api";
 
-function Generate({ modifyUrls }) {
+function Generate({ token, onCreated }) {
   const shortnerResult = useRef(null);
   const [url, setUrl] = useState("");
-  const { user } = useAuth();
 
   const urlPattern =
     /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/g;
@@ -15,28 +14,29 @@ function Generate({ modifyUrls }) {
   async function handleUrlSubmit(e) {
     e.target.innerHTML = "<i class='bx bx-loader'></i>";
     if (url.match(urlPattern)) {
-      let response = await fetch("/generate", {
+      const { ok, data } = await apiRequest("/shorten", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url: url, userName: user.userName }),
+        token,
+        body: { url },
       });
 
-      if (response.ok) {
-        // If response is okay add the url to the list and show it
-        let responseData = await response.json();
+      if (ok) {
+        // create the url from the current host
+        data.short_url = `${window.location.origin}/api/${data.short_code}`;
 
         // add the url to the list shown to the user
-        modifyUrls((prev) => ({
-          ...prev,
-          [responseData.shortUrl]: url,
-        }));
+        onCreated({
+          code: data.short_code,
+          target_url: url,
+          is_active: true,
+          click_count: 0,
+          created_at: new Date().toISOString(),
+        });
 
         // Update the output text and style
         shortnerResult.current.className =
           "generator-result generator-result-success";
-        shortnerResult.current.innerHTML = location.origin + "/" + responseData.shortUrl;
+        shortnerResult.current.innerHTML = data.short_url;
       } else {
         // Update the output text and style
         shortnerResult.current.className =
@@ -83,7 +83,8 @@ function Generate({ modifyUrls }) {
 }
 
 Generate.propTypes = {
-  modifyUrls: PropTypes.func,
+  token: PropTypes.string,
+  onCreated: PropTypes.func,
 };
 
 export default Generate;
